@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "github.com/yclw/mys_project/pkg/protobuf/gen/auth/v1";
+
+// 认证服务定义
+service AuthService {
+  // 用户名密码登录
+  rpc Login(LoginRequest) returns (LoginResponse);
+}
+
+// 登录请求
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+// 登录响应
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_in = 3; // 有效期(秒)
+}
+
+// 令牌验证请求
+message VerifyTokenRequest {
+  string token = 1;
+}
+
+// 令牌验证响应
+message VerifyTokenResponse {
+  bool valid = 1;
+  string user_id = 2;
+  repeated string roles = 3; // 用户角色
+}

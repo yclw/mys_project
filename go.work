@@ -1,0 +1,15 @@
+go 1.24.2
+
+use (
+  // 公共包
+  ./pkg/protobuf
+  ./pkg/utils
+  ./pkg/common
+  ./pkg/domain
+
+  // 接口服务
+  ./apps/api
+
+  // 业务服务
+  ./apps/auth
+)

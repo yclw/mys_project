@@ -1,0 +1,187 @@
+# Go相关文件
+# 编译输出
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+/dist/
+/build/
+coverage.out
+coverage.html
+
+# Go模块相关
+go.sum
+go.work.sum
+vendor/
+
+# IDE相关文件
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# GoLand / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# 操作系统相关文件
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# 日志文件
+*.log
+logs/
+log/
+
+# 临时文件
+*.tmp
+*.temp
+tmp/
+temp/
+
+# 环境配置文件
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# 配置文件中的敏感信息
+configs/*.env
+!configs/*.env.example
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 缓存文件
+.cache/
+
+# 测试相关
+test_results/
+*.cover
+*.coverprofile
+
+# Docker相关
+.dockerignore
+
+# Node.js相关（如果有前端资源）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 生成的文件
+# 如果protobuf生成的文件需要忽略，取消下面的注释
+pkg/protobuf/gen/
+
+# 备份文件
+*.bak
+*.backup
+
+# 压缩文件
+*.tar
+*.tar.gz
+*.zip
+*.rar
+
+# 文档生成
+docs/generated/
+
+# 本地开发工具
+.air.toml
+.realize.yaml
+
+# 证书和密钥文件
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# 监控和性能分析
+*.pprof
+*.prof
+
+# 依赖管理工具
+Godeps/
+glide.lock
+dep/
+
+# 其他
+.vscode-test
+.nyc_output
+.grunt
+.bower_components
+.lock-wscript
+.wafpickle-*
+.task-*
+jspm_packages/
+typings/
+.npm
+.eslintcache
+.node_repl_history
+.yarn-integrity
+.next
+.nuxt
+.vuepress/dist
+.serverless
+.fusebox/
+
+# 本地数据库
+*.db-journal
+*.db-wal
+*.db-shm
