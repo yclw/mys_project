@@ -1,12 +1,13 @@
 package main
 
 import (
-	"context"
-	"log"
+	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/yclw/mys_project/apps/api/config"
+	"github.com/yclw/mys_project/apps/api/internal/client"
 	"github.com/yclw/mys_project/apps/api/routes"
 	"github.com/yclw/mys_project/pkg/common/global"
 	"github.com/yclw/mys_project/pkg/common/server"
@@ -17,32 +18,27 @@ func init() {
 	// 初始化配置
 	cfg, err := config.InitConfig("./config/config.yaml")
 	if err != nil {
-		log.Fatal("Failed to initialize config:", err)
-		return
+		slog.Error("Failed to initialize config", "error", err)
+		os.Exit(1)
 	}
 
 	// 初始化日志
-	logger.Init(&logger.Config{
-		Level:      logger.ParseLevel(cfg.Log.Level),
-		Format:     logger.ParseFormat(cfg.Log.Format),
-		Output:     cfg.Log.Output,
-		FilePath:   cfg.Log.FilePath,
-		MaxSize:    cfg.Log.MaxSize,
-		MaxBackups: cfg.Log.MaxBackups,
-		MaxAge:     cfg.Log.MaxAge,
-		Compress:   cfg.Log.Compress,
-	})
+	if err = logger.InitLogger(cfg.Log.Level); err != nil {
+		slog.Error("Failed to initialize logger", "error", err)
+		os.Exit(1)
+	}
 
 	// 初始化全局配置
 	global.Cfg = cfg
-	global.Logs = logger.GetLogger()
 }
 
 func main() {
-	ctx := context.Background()
 	cfg := global.Cfg.(*config.Config)
 
-	global.Logs.Info(ctx, "Starting API service", "service", cfg.Server.Name)
+	slog.Info("Starting API service", "service", cfg.Server.Name)
+
+	// 初始化所有gRPC客户端
+	client.Init()
 
 	// 初始化路由
 	router := routes.SetupRouter()
@@ -54,11 +50,11 @@ func main() {
 	}
 
 	// 创建启停服务器
-	gracefulSrv := server.NewGracefulServer(srv, 10*time.Second)
+	gracefulSrv := server.NewHttpServer(srv, 10*time.Second)
 
 	// 添加清理函数
 	gracefulSrv.AddCleanup(func() error {
-		global.Logs.Info(ctx, "Cleaning up resources...")
+		slog.Info("Cleaning up resources...")
 		return nil
 	})
 

@@ -185,3 +185,4 @@ typings/
 *.db-journal
 *.db-wal
 *.db-shm
+deployments/data/

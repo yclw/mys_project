@@ -1,18 +1,22 @@
 package routes
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
-// setupRouter 设置路由
+// SetupRouter 设置路由
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
-	// TODO: 设置路由
-	router.GET("/", func(c *gin.Context) {
-		// 返回hello world
-		c.String(http.StatusOK, "hello world")
-	})
+
+	// 全局中间件
+	router.Use(gin.Logger()) // 日志中间件
+
+	// API路由分组
+	apiV1 := router.Group("/api/v1")
+	{
+		// 认证路由
+		setupAuthRoutes(apiV1)
+	}
+
 	return router
 }

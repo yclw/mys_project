@@ -6,9 +6,10 @@ use (
 
 	// 业务服务
 	./apps/auth
-	./pkg/common
-	./pkg/domain
+	
 	// 公共包
+	./pkg/common
+	./pkg/model
 	./pkg/protobuf
 	./pkg/utils
 )

@@ -8,10 +8,3 @@ etcd:
 
 log:
   level: "info"
-  format: "json"
-  output: "both"
-  file_path: "logs/api.log"
-  max_size: 100
-  max_backups: 3
-  max_age: 30
-  compress: true

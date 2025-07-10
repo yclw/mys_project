@@ -12,7 +12,7 @@ mysql:
   username: root
   password: root
   host: 127.0.0.1
-  port: 3309
+  port: 3306
   db: mysproject
 
 redis:
@@ -23,14 +23,7 @@ redis:
 
 etcd:
   addrs:
-    - "etcd3:2379"
+    - "127.0.0.1:2379"
 
 log:
   level: "info"
-  format: "json"
-  output: "both"
-  file_path: "logs/auth.log"
-  max_size: 100
-  max_backups: 3
-  max_age: 30
-  compress: true

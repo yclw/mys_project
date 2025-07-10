@@ -45,14 +45,7 @@ type EtcdConfig struct {
 }
 
 type LogConfig struct {
-	Level      string `mapstructure:"level" yaml:"level"`             // debug, info, warn, error
-	Format     string `mapstructure:"format" yaml:"format"`           // json, text
-	Output     string `mapstructure:"output" yaml:"output"`           // console, file, both
-	FilePath   string `mapstructure:"file_path" yaml:"file_path"`     // 日志文件路径
-	MaxSize    int64  `mapstructure:"max_size" yaml:"max_size"`       // 最大文件大小 (MB)
-	MaxBackups int    `mapstructure:"max_backups" yaml:"max_backups"` // 最大备份数
-	MaxAge     int    `mapstructure:"max_age" yaml:"max_age"`         // 最大保存天数
-	Compress   bool   `mapstructure:"compress" yaml:"compress"`       // 是否压缩
+	Level string `mapstructure:"level" yaml:"level"` // debug, info, warn, error
 }
 
 func InitConfig(filePath string) (*Config, error) {
