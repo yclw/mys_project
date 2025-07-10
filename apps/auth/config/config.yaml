@@ -1,0 +1,36 @@
+server:
+  name: "auth"
+  addr: "0.0.0.0:8999"
+
+grpc_server:
+  addr: "0.0.0.0:8081"
+  name: "auth"
+  version: "v1.0.0"
+  weight: 10
+
+mysql:
+  username: root
+  password: root
+  host: 127.0.0.1
+  port: 3309
+  db: mysproject
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: ""
+  db: 0
+
+etcd:
+  addrs:
+    - "etcd3:2379"
+
+log:
+  level: "info"
+  format: "json"
+  output: "both"
+  file_path: "logs/auth.log"
+  max_size: 100
+  max_backups: 3
+  max_age: 30
+  compress: true

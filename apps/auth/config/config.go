@@ -5,14 +5,39 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig `mapstructure:"server" yaml:"server"`
-	Etcd   EtcdConfig   `mapstructure:"etcd" yaml:"etcd"`
-	Log    LogConfig    `mapstructure:"log" yaml:"log"`
+	Server     ServerConfig     `mapstructure:"server" yaml:"server"`
+	GrpcServer GrpcServerConfig `mapstructure:"grpc_server" yaml:"grpc_server"`
+	Mysql      MysqlConfig      `mapstructure:"mysql" yaml:"mysql"`
+	Redis      RedisConfig      `mapstructure:"redis" yaml:"redis"`
+	Etcd       EtcdConfig       `mapstructure:"etcd" yaml:"etcd"`
+	Log        LogConfig        `mapstructure:"log" yaml:"log"`
 }
 
 type ServerConfig struct {
 	Name string `mapstructure:"name" yaml:"name"`
 	Addr string `mapstructure:"addr" yaml:"addr"`
+}
+
+type GrpcServerConfig struct {
+	Name    string `mapstructure:"name" yaml:"name"`
+	Addr    string `mapstructure:"addr" yaml:"addr"`
+	Version string `mapstructure:"version" yaml:"version"`
+	Weight  int    `mapstructure:"weight" yaml:"weight"`
+}
+
+type MysqlConfig struct {
+	Username string `mapstructure:"username" yaml:"username"`
+	Password string `mapstructure:"password" yaml:"password"`
+	Host     string `mapstructure:"host" yaml:"host"`
+	Port     int    `mapstructure:"port" yaml:"port"`
+	Db       string `mapstructure:"db" yaml:"db"`
+}
+
+type RedisConfig struct {
+	Host     string `mapstructure:"host" yaml:"host"`
+	Port     int    `mapstructure:"port" yaml:"port"`
+	Password string `mapstructure:"password" yaml:"password"`
+	Db       int    `mapstructure:"db" yaml:"db"`
 }
 
 type EtcdConfig struct {
