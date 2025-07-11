@@ -2,15 +2,13 @@ package main
 
 import (
 	"log/slog"
-	"net/http"
 	"os"
-	"time"
 
 	"github.com/yclw/mys_project/apps/api/config"
+	"github.com/yclw/mys_project/apps/api/global"
 	"github.com/yclw/mys_project/apps/api/internal/client"
+	"github.com/yclw/mys_project/apps/api/internal/server"
 	"github.com/yclw/mys_project/apps/api/routes"
-	"github.com/yclw/mys_project/pkg/common/global"
-	"github.com/yclw/mys_project/pkg/common/server"
 	"github.com/yclw/mys_project/pkg/utils/logger"
 )
 
@@ -33,31 +31,14 @@ func init() {
 }
 
 func main() {
-	cfg := global.Cfg.(*config.Config)
+	cfg := global.Cfg
 
 	slog.Info("Starting API service", "service", cfg.Server.Name)
 
 	// 初始化所有gRPC客户端
 	client.Init()
 
-	// 初始化路由
-	router := routes.SetupRouter()
-
 	// 创建HTTP服务器
-	srv := &http.Server{
-		Addr:    cfg.Server.Addr,
-		Handler: router,
-	}
-
-	// 创建启停服务器
-	gracefulSrv := server.NewHttpServer(srv, 10*time.Second)
-
-	// 添加清理函数
-	gracefulSrv.AddCleanup(func() error {
-		slog.Info("Cleaning up resources...")
-		return nil
-	})
-
-	// 启动服务器
-	gracefulSrv.Start()
+	router := routes.SetupRouter()
+	server.InitServer(router)
 }

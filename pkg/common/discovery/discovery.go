@@ -25,15 +25,13 @@ type Register struct {
 	srvInfo Server
 	srvTTL  int64
 	cli     *clientv3.Client
-	logger  *slog.Logger
 }
 
 // NewRegister create a register base on etcd
-func NewRegister(etcdAddrs []string, logger *slog.Logger) *Register {
+func NewRegister(etcdAddrs []string) *Register {
 	return &Register{
 		EtcdAddrs:   etcdAddrs,
 		DialTimeout: 3,
-		logger:      logger,
 	}
 }
 
@@ -106,22 +104,22 @@ func (r *Register) keepAlive() {
 		select {
 		case <-r.closeCh:
 			if err := r.unregister(); err != nil {
-				r.logger.Error("unregister failed", "error", err)
+				slog.Error("unregister failed", "error", err)
 			}
 			if _, err := r.cli.Revoke(context.Background(), r.leasesID); err != nil {
-				r.logger.Error("revoke failed", "error", err)
+				slog.Error("revoke failed", "error", err)
 			}
 			return
 		case res := <-r.keepAliveCh:
 			if res == nil {
 				if err := r.register(); err != nil {
-					r.logger.Error("register failed", "error", err)
+					slog.Error("register failed", "error", err)
 				}
 			}
 		case <-ticker.C:
 			if r.keepAliveCh == nil {
 				if err := r.register(); err != nil {
-					r.logger.Error("register failed", "error", err)
+					slog.Error("register failed", "error", err)
 				}
 			}
 		}

@@ -1,18 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
-	"net/http"
 	"os"
-	"time"
 
 	"github.com/yclw/mys_project/apps/auth/config"
-	"github.com/yclw/mys_project/apps/auth/pkg/service"
-	"github.com/yclw/mys_project/pkg/common/global"
-	"github.com/yclw/mys_project/pkg/common/server"
-	v1 "github.com/yclw/mys_project/pkg/protobuf/gen/auth/v1"
+	"github.com/yclw/mys_project/apps/auth/global"
+	"github.com/yclw/mys_project/apps/auth/internal/server"
+	"github.com/yclw/mys_project/pkg/common/cache"
+	"github.com/yclw/mys_project/pkg/common/database"
+	"github.com/yclw/mys_project/pkg/model"
 	"github.com/yclw/mys_project/pkg/utils/logger"
-	"google.golang.org/grpc"
 )
 
 func init() {
@@ -35,37 +34,25 @@ func init() {
 
 func main() {
 	// 从全局变量获取配置和日志
-	cfg := global.Cfg.(*config.Config)
-
-	slog.Info("Starting Auth service", "service", cfg.Server.Name)
-
-	// 初始化gRPC服务
-	s := server.StartGrpc(func(s *grpc.Server) {
-		v1.RegisterAuthServiceServer(s, service.NewAuthService())
-	})
+	cfg := global.Cfg
+	slog.Info("Starting service", "service", cfg.Server.Name)
 
 	// 初始化数据库
-
-	// 初始化Redis
-
-	// 初始化etcd
-	server.RegisterEtcd()
-
-	// 创建HTTP服务器
-	srv := &http.Server{
-		Addr: cfg.Server.Addr,
+	mysqlDSN := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		cfg.Mysql.Username, cfg.Mysql.Password, cfg.Mysql.Host, cfg.Mysql.Port, cfg.Mysql.Db)
+	if err := database.Init(database.DBTypeMysql, mysqlDSN, &model.User{}); err != nil {
+		slog.Error("Failed to initialize database", "error", err)
+		return
 	}
 
-	// 创建启停服务器
-	gracefulSrv := server.NewHttpServer(srv, 10*time.Second)
+	// 初始化缓存
+	redisDSN := fmt.Sprintf("redis://:%s@%s:%d/%d",
+		cfg.Redis.Password, cfg.Redis.Host, cfg.Redis.Port, cfg.Redis.Db)
+	if err := cache.Init(cache.CacheTypeRedis, redisDSN); err != nil {
+		slog.Error("Failed to initialize cache", "error", err)
+		return
+	}
 
-	// 添加清理函数
-	gracefulSrv.AddCleanup(func() error {
-		slog.Info("Cleaning up resources...")
-		s.Stop()
-		return nil
-	})
-
-	// 启动服务器
-	gracefulSrv.Start()
+	// 创建启动服务器
+	server.InitServer()
 }

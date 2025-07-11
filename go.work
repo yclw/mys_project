@@ -6,7 +6,7 @@ use (
 
 	// 业务服务
 	./apps/auth
-	
+
 	// 公共包
 	./pkg/common
 	./pkg/model

@@ -7,12 +7,8 @@ import (
 
 // 初始化
 func InitLogger(level string) error {
-	// //使用json格式
-	// logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-	// 	AddSource: true,
-	// 	Level:     LogLevel(level),
-	// }))
-	// slog.SetDefault(logger)
+	logger := slog.Default()
+	slog.SetDefault(logger)
 	return nil
 }
 

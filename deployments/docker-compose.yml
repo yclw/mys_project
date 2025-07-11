@@ -2,48 +2,27 @@ version: '3'
 services:
   mysql:
     container_name: mysql8
-    image: mysql:${MYSQL_VERSION}
+    image: mysql:8.0
     restart: always
     ports:
-      - 3306:3306
+      - "3306:3306"
     environment:
-      TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: msproject
-    volumes:
-      - ${MYSQL_DIR}/data:/var/lib/mysql
-      - ${MYSQL_DIR}/conf:/etc/mysql/conf.d/
-      - ${MYSQL_DIR}/logs:/logs
-    command:
-      --default-authentication-plugin=mysql_native_password
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_general_ci
-      --explicit_defaults_for_timestamp=true
-      --lower_case_table_names=1
 
-  Redis:
+  redis:
     container_name: redis6
-    image: redis:${REDIS_VERSION}
+    image: redis:6.2
     restart: always
-    volumes:
-      - ${REDIS_DIR}/data:/data
-      - ${REDIS_DIR}/conf/redis.conf:/etc/redis/redis.conf
     ports:
-      - ${REDIS_PORT}:6379
-    command: redis-server /etc/redis/redis.conf
+      - "6379:6379"
 
-  Etcd:
+  etcd:
     container_name: etcd3
-    image: bitnami/etcd:${ETCD_VERSION}
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
+    image: bitnami/etcd:3.5
+    restart: always
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-    privileged: true
-    volumes:
-      - ${ETCD_DIR}/data:/bitnami/etcd/data
     ports:
-      - ${ETCD_PORT}:2379
-      - 2380:2380
+      - "2379:2379"
+      - "2380:2380"

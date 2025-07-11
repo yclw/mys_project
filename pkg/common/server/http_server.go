@@ -35,9 +35,9 @@ func (hs *HttpServer) AddCleanup(cleanup func() error) {
 func (hs *HttpServer) Start() {
 	// 在goroutine中启动服务器
 	go func() {
-		slog.Info("Starting server on %s", hs.Server.Addr)
+		slog.Info("Starting server on", "addr", hs.Server.Addr)
 		if err := hs.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			slog.Error("Failed to start server: %v", err)
+			slog.Error("Failed to start server", "error", err)
 			return
 		}
 	}()
@@ -55,7 +55,6 @@ func (hs *HttpServer) waitForShutdown() {
 
 	// 阻塞等待信号
 	<-quit
-	ctx := context.Background()
 	slog.Info("Shutdown Server ...")
 
 	// 创建一个超时的上下文
@@ -67,7 +66,7 @@ func (hs *HttpServer) waitForShutdown() {
 
 	// 优雅关闭服务器
 	if err := hs.Server.Shutdown(ctx); err != nil {
-		slog.Error("Server forced to shutdown: %v", err)
+		slog.Error("Server forced to shutdown", "error", err)
 	}
 
 	slog.Info("Server exiting")
@@ -77,7 +76,7 @@ func (hs *HttpServer) waitForShutdown() {
 func (hs *HttpServer) runCleanupFuncs() {
 	for i, cleanup := range hs.CleanupFuncs {
 		if err := cleanup(); err != nil {
-			slog.Error("Error in cleanup function %d: %v", i, err)
+			slog.Error("Error in cleanup function", "index", i, "error", err)
 		}
 	}
 }

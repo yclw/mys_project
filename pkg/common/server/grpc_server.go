@@ -1,19 +1,16 @@
 package server
 
 import (
+	"context"
 	"log/slog"
 	"net"
+	"time"
 
-	"github.com/yclw/mys_project/apps/auth/config"
-	"github.com/yclw/mys_project/pkg/common/discovery"
-	"github.com/yclw/mys_project/pkg/common/global"
 	"google.golang.org/grpc"
 )
 
 // 启动gRPC服务
-func StartGrpc(registerFunc func(s *grpc.Server)) *grpc.Server {
-	cfg := global.Cfg.(*config.Config)
-	addr := cfg.GrpcServer.Addr
+func StartGrpcServer(addr string, registerFunc func(s *grpc.Server)) *grpc.Server {
 	s := grpc.NewServer()
 	registerFunc(s)
 	lis, err := net.Listen("tcp", addr)
@@ -21,7 +18,7 @@ func StartGrpc(registerFunc func(s *grpc.Server)) *grpc.Server {
 		slog.Error("cannot listen", "error", err)
 	}
 	go func() {
-		slog.Info("grpc server started as: %s \n", addr)
+		slog.Info("grpc server started", "addr", addr)
 		err = s.Serve(lis)
 		if err != nil {
 			slog.Error("server started error", "error", err)
@@ -30,26 +27,26 @@ func StartGrpc(registerFunc func(s *grpc.Server)) *grpc.Server {
 	return s
 }
 
-// 注册服务到etcd
-func RegisterEtcd() {
-	cfg := global.Cfg.(*config.Config)
+func StopGrpcServer(grpcServer *grpc.Server) {
+	// 创建一个带超时的上下文，用于优雅停止
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
-	name := cfg.GrpcServer.Name
-	addr := cfg.GrpcServer.Addr
-	version := cfg.GrpcServer.Version
-	weight := cfg.GrpcServer.Weight
-	info := discovery.Server{
-		Name:    name,
-		Addr:    addr,
-		Version: version,
-		Weight:  weight,
-	}
+	// 在goroutine中执行优雅停止
+	done := make(chan struct{})
+	go func() {
+		slog.Info("开始优雅停止 gRPC 服务器...")
+		grpcServer.GracefulStop()
+		close(done)
+	}()
 
-	etcdAddrs := cfg.Etcd.Addrs
-	r := discovery.NewRegister(etcdAddrs, nil) // 注册etcd
-	_, err := r.Register(info, 2)
-	if err != nil {
-		slog.Error("register etcd error", "error", err)
-		return
+	// 等待优雅停止完成或超时
+	select {
+	case <-done:
+		slog.Info("gRPC 服务器优雅停止完成")
+	case <-ctx.Done():
+		slog.Warn("优雅停止超时，开始强制停止...")
+		grpcServer.Stop()
+		slog.Info("gRPC 服务器强制停止完成")
 	}
 }

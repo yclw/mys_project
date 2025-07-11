@@ -27,17 +27,15 @@ type Resolver struct {
 	keyPrifix    string
 	srvAddrsList []resolver.Address
 
-	cc     resolver.ClientConn
-	logger *slog.Logger
+	cc resolver.ClientConn
 }
 
 // NewResolver create a new resolver.Builder base on etcd
-func NewResolver(etcdAddrs []string, logger *slog.Logger) *Resolver {
+func NewResolver(etcdAddrs []string) *Resolver {
 	return &Resolver{
 		schema:      schema,
 		EtcdAddrs:   etcdAddrs,
 		DialTimeout: 3,
-		logger:      logger,
 	}
 }
 
@@ -103,7 +101,7 @@ func (r *Resolver) watch() {
 			}
 		case <-ticker.C:
 			if err := r.sync(); err != nil {
-				r.logger.Error("sync failed", "error", err)
+				slog.Error("sync failed", "error", err)
 			}
 		}
 	}
