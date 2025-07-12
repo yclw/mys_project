@@ -5,21 +5,25 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/yclw/mys_project/apps/auth/global"
-	"github.com/yclw/mys_project/apps/auth/pkg/service"
-	"github.com/yclw/mys_project/pkg/common/discovery"
+	"github.com/yclw/mys_project/apps/user/global"
+	"github.com/yclw/mys_project/apps/user/pkg/service"
+	"github.com/yclw/mys_project/pkg/common/registrar/etcd"
 	"github.com/yclw/mys_project/pkg/common/server"
-	v1 "github.com/yclw/mys_project/pkg/protobuf/gen/auth/v1"
+	v1 "github.com/yclw/mys_project/pkg/protobuf/gen/user/v1"
 	"google.golang.org/grpc"
 )
 
 var (
 	grpcServer   *grpc.Server
-	etcdRegister *discovery.Register
+	etcdRegister *etcd.Register
 )
 
 func InitServer() {
 	cfg := global.Cfg
+
+	// 初始化grpc服务
+	InitGRPCServer()
+
 	srv := &http.Server{
 		Addr: cfg.Server.Addr,
 	}
@@ -42,12 +46,12 @@ func InitGRPCServer() {
 	cfg := global.Cfg
 
 	grpcServer = server.StartGrpcServer(cfg.GrpcServer.Addr, func(s *grpc.Server) {
-		v1.RegisterAuthServiceServer(s, service.NewAuthService())
+		v1.RegisterUserServiceServer(s, service.NewUserService())
 	})
 
 	// 注册grpc服务到etcd
-	etcdRegister = discovery.NewRegister(cfg.Etcd.Addrs)
-	grpcServerInfo := discovery.Server{
+	etcdRegister = etcd.NewRegister(cfg.Etcd.Addrs)
+	grpcServerInfo := etcd.Server{
 		Name:    cfg.GrpcServer.Name,
 		Addr:    cfg.GrpcServer.Addr,
 		Version: cfg.GrpcServer.Version,

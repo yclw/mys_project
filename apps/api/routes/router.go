@@ -14,8 +14,8 @@ func SetupRouter() *gin.Engine {
 	// API路由分组
 	apiV1 := router.Group("/api/v1")
 	{
-		// 认证路由
-		setupAuthRoutes(apiV1)
+		// 用户路由
+		setupUserRoutes(apiV1)
 	}
 
 	return router

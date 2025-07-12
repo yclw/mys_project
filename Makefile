@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # 项目信息
 PROJECT_NAME := mys_project
 API_SERVICE := apps/api
-AUTH_SERVICE := apps/auth
+USER_SERVICE := apps/user
 BIN_DIR := bin
 
 # Go相关配置
@@ -36,13 +36,13 @@ help: ## 显示帮助信息
 init: ## 初始化项目环境
 	@echo -e "$(GREEN)正在初始化项目环境...$(RESET)"
 	@mkdir -p $(BIN_DIR) logs
-	@mkdir -p apps/api/logs apps/auth/logs
+	@mkdir -p apps/api/logs apps/user/logs
 	@$(GOWORK) sync
 	@echo -e "$(GREEN)0. 初始化项目...$(RESET)"
 	@echo -e "$(GREEN)1. 初始化API服务...$(RESET)"
 	@cd $(API_SERVICE) && $(GOMOD) download && $(GOMOD) tidy
-	@echo -e "$(GREEN)2. 初始化认证服务...$(RESET)"
-	@cd $(AUTH_SERVICE) && $(GOMOD) download && $(GOMOD) tidy
+	@echo -e "$(GREEN)2. 初始化用户服务...$(RESET)"
+	@cd $(USER_SERVICE) && $(GOMOD) download && $(GOMOD) tidy
 	@echo -e "$(GREEN)3. 初始化公共包...$(RESET)"
 	@cd pkg/common && $(GOMOD) download && $(GOMOD) tidy
 	@echo -e "$(GREEN)4. 初始化protobuf包...$(RESET)"
@@ -60,18 +60,25 @@ pb: ## 生成protobuf代码
 
 run: ## 运行项目
 	@echo -e "$(GREEN)正在启动项目...$(RESET)"
+	@make kill
 	@echo -e "$(GREEN)1. 启动基础设施...$(RESET)"
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d mysql redis etcd
 	@echo -e "$(GREEN)2. 构建服务...$(RESET)"
-	@cd $(AUTH_SERVICE) && $(GOBUILD) -o $(shell pwd)/$(BIN_DIR)/auth ./main.go
+	@cd $(USER_SERVICE) && $(GOBUILD) -o $(shell pwd)/$(BIN_DIR)/user ./main.go
 	@cd $(API_SERVICE) && $(GOBUILD) -o $(shell pwd)/$(BIN_DIR)/api ./main.go
-	@echo -e "$(GREEN)3. 启动认证服务...$(RESET)"
-	@cd $(AUTH_SERVICE) && $(shell pwd)/$(BIN_DIR)/auth &
+	@echo -e "$(GREEN)3. 启动用户服务...$(RESET)"
+	@cd $(USER_SERVICE) && $(shell pwd)/$(BIN_DIR)/user &
 	@sleep 3
 	@echo -e "$(GREEN)4. 启动API服务...$(RESET)"
 	@cd $(API_SERVICE) && $(shell pwd)/$(BIN_DIR)/api &
 	@echo -e "$(GREEN)项目启动完成！$(RESET)"
 	@echo -e "$(BLUE)API服务: http://localhost:8080$(RESET)"
-	@echo -e "$(BLUE)认证服务: grpc://localhost:8081$(RESET)"
+	@echo -e "$(BLUE)用户服务: grpc://localhost:8081$(RESET)"
 
-.PHONY: help init pb run 
+kill: ## 杀死进程
+	@echo -e "$(GREEN)正在杀死进程...$(RESET)"
+	@pkill -f $(BIN_DIR)/api || true
+	@pkill -f $(BIN_DIR)/user || true
+	@echo -e "$(GREEN)进程杀死完成$(RESET)"
+
+.PHONY: help init pb run kill

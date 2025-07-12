@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package auth.v1;
+package user.v1;
 
-option go_package = "github.com/yclw/mys_project/pkg/protobuf/gen/auth/v1";
+option go_package = "github.com/yclw/mys_project/pkg/protobuf/gen/user/v1";
 
-// 认证服务定义
-service AuthService {
+// 用户服务定义
+service UserService {
   // ping
   rpc Ping(PingRequest) returns (PongResponse);
   // 用户名密码登录

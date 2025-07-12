@@ -9,15 +9,15 @@ import (
 	"github.com/yclw/mys_project/apps/api/internal/client"
 	"github.com/yclw/mys_project/apps/api/internal/errs"
 	"github.com/yclw/mys_project/pkg/common/response"
-	v1 "github.com/yclw/mys_project/pkg/protobuf/gen/auth/v1"
+	v1 "github.com/yclw/mys_project/pkg/protobuf/gen/user/v1"
 )
 
-var Auth = &HandlerAuth{}
+var User = &HandlerUser{}
 
-type HandlerAuth struct {
+type HandlerUser struct {
 }
 
-func (h *HandlerAuth) Ping(c *gin.Context) {
+func (h *HandlerUser) Ping(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -25,15 +25,15 @@ func (h *HandlerAuth) Ping(c *gin.Context) {
 
 	// 校验参数
 
-	// 获取认证服务客户端
+	// 获取用户服务客户端
 
 	// 调用grpc服务
-	authClient := client.Auth()
-	if authClient == nil {
+	userClient := client.User()
+	if userClient == nil {
 		c.JSON(http.StatusOK, errs.ServiceUnavailable.ToResult())
 		return
 	}
-	resp, err := authClient.Ping(ctx, &v1.PingRequest{})
+	resp, err := userClient.Ping(ctx, &v1.PingRequest{})
 	if err != nil {
 		c.JSON(http.StatusOK, err.Error())
 		return
@@ -43,7 +43,7 @@ func (h *HandlerAuth) Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, response.OK(resp))
 }
 
-func (h *HandlerAuth) Register(c *gin.Context) {
+func (h *HandlerUser) Register(c *gin.Context) {
 	_, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -51,13 +51,13 @@ func (h *HandlerAuth) Register(c *gin.Context) {
 
 	// 验证参数
 
-	// 获取认证服务客户端
+	// 获取用户服务客户端
 
 	// 调用grpc服务
 
 	// 返回成功响应
 }
-func (h *HandlerAuth) SendVerificationCode(c *gin.Context) {
+func (h *HandlerUser) SendVerificationCode(c *gin.Context) {
 	_, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
@@ -65,7 +65,7 @@ func (h *HandlerAuth) SendVerificationCode(c *gin.Context) {
 
 	// 验证参数
 
-	// 获取认证服务客户端
+	// 获取用户服务客户端
 
 	// 调用grpc服务
 

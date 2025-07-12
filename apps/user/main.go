@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/yclw/mys_project/apps/auth/config"
-	"github.com/yclw/mys_project/apps/auth/global"
-	"github.com/yclw/mys_project/apps/auth/internal/server"
+	"github.com/yclw/mys_project/apps/user/config"
+	"github.com/yclw/mys_project/apps/user/global"
+	"github.com/yclw/mys_project/apps/user/internal/server"
 	"github.com/yclw/mys_project/pkg/common/cache"
 	"github.com/yclw/mys_project/pkg/common/database"
 	"github.com/yclw/mys_project/pkg/model"

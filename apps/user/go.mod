@@ -1,4 +1,4 @@
-module github.com/yclw/mys_project/apps/auth
+module github.com/yclw/mys_project/apps/user
 
 go 1.24.2
 

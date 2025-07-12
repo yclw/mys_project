@@ -1,10 +1,10 @@
 server:
-  name: "auth"
+  name: "user"
   addr: "0.0.0.0:8999"
 
 grpc_server:
   addr: "0.0.0.0:8081"
-  name: "auth"
+  name: "user"
   version: "v1.0.0"
   weight: 10
 

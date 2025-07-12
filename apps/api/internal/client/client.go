@@ -4,8 +4,8 @@ import (
 	"log/slog"
 
 	"github.com/yclw/mys_project/apps/api/global"
-	"github.com/yclw/mys_project/pkg/common/discovery"
-	v1 "github.com/yclw/mys_project/pkg/protobuf/gen/auth/v1"
+	"github.com/yclw/mys_project/pkg/common/registrar/etcd"
+	v1 "github.com/yclw/mys_project/pkg/protobuf/gen/user/v1"
 	"google.golang.org/grpc/resolver"
 )
 
@@ -13,7 +13,7 @@ var clients *Clients
 
 // Clients 客户端管理器
 type Clients struct {
-	AuthClient v1.AuthServiceClient
+	UserClient v1.UserServiceClient
 }
 
 // Init 初始化所有gRPC客户端
@@ -24,7 +24,7 @@ func Init() {
 	initEtcdResolver()
 
 	clients = &Clients{
-		AuthClient: initAuthClient(),
+		UserClient: initUserClient(),
 	}
 
 	slog.Info("All gRPC clients initialized successfully")
@@ -39,7 +39,7 @@ func initEtcdResolver() {
 	slog.Info("Initializing etcd resolver", "etcd_addrs", etcdAddrs)
 
 	// 创建并注册 etcd 解析器
-	etcdResolver := discovery.NewResolver(etcdAddrs)
+	etcdResolver := etcd.NewResolver(etcdAddrs)
 	resolver.Register(etcdResolver)
 
 	slog.Info("Etcd resolver initialized successfully")

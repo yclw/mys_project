@@ -5,7 +5,7 @@ use (
 	./apps/api
 
 	// 业务服务
-	./apps/auth
+	./apps/user
 
 	// 公共包
 	./pkg/common

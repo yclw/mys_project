@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"net"
+	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -16,6 +17,8 @@ func StartGrpcServer(addr string, registerFunc func(s *grpc.Server)) *grpc.Serve
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		slog.Error("cannot listen", "error", err)
+		slog.Error("grpc server failed to start, exiting...")
+		os.Exit(1)
 	}
 	go func() {
 		slog.Info("grpc server started", "addr", addr)
